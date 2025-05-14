@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:notes_flutter/routes/app_routes.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,11 +14,13 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 3), () {
-      _proccedToNextScreen();
+      _proceedToNextScreen();
     });
   }
 
-  void _proccedToNextScreen() {}
+  void _proceedToNextScreen() {
+    context.go(AppRoutes.login);
+  }
 
   @override
   Widget build(BuildContext context) {
