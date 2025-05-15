@@ -57,7 +57,12 @@ class AddNotesScreen extends StatelessWidget {
                 onFieldSubmitted: (value) {},
               ),
               const SizedBox(height: 20),
-              CustomElevatedButton(buttonName: 'Add Note', onPressed: () {}),
+              CustomElevatedButton(
+                buttonName: 'Add Note',
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {}
+                },
+              ),
             ],
           ),
         ),
