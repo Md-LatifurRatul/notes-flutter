@@ -6,7 +6,7 @@ import 'package:notes_flutter/controllers/sign_up_controller.dart';
 import 'package:notes_flutter/models/auth_user.dart';
 import 'package:notes_flutter/routes/app_routes.dart';
 import 'package:notes_flutter/widgets/auth_bottom_section.dart';
-import 'package:notes_flutter/widgets/custom_auth_button.dart';
+import 'package:notes_flutter/widgets/custom_elevated_button.dart';
 import 'package:notes_flutter/widgets/snack_message.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -89,7 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   builder: (signUpController) {
                     return signUpController.inProgress
                         ? const Center(child: CircularProgressIndicator())
-                        : CustomAuthButton(
+                        : CustomElevatedButton(
                           buttonName: "SignUp",
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
