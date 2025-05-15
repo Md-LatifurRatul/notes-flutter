@@ -34,6 +34,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final success = await signUpController.singUp(user);
     if (success) {
       SnackMessage.shownackMessage(
+        context: context,
         message: "Account created! Please login",
         type: SnackType.success,
       );
@@ -45,6 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
     } else {
       SnackMessage.shownackMessage(
+        context: context,
         message: signUpController.errorMessage,
         type: SnackType.error,
       );
@@ -104,7 +106,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   labelText: "Already have an account?",
                   authText: "Login",
                   onPressed: () {
-                    context.push(AppRoutes.signup);
+                    context.push(AppRoutes.login);
                   },
                 ),
               ],

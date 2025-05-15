@@ -17,7 +17,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
 
@@ -35,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final success = await signInController.signIn(user);
     if (success) {
       SnackMessage.shownackMessage(
+        context: context,
         message: "Login Sucessful",
         type: SnackType.success,
       );
@@ -43,6 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } else {
       SnackMessage.shownackMessage(
+        context: context,
         message: signInController.errorMessage,
         type: SnackType.error,
       );
