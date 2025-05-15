@@ -37,24 +37,45 @@ class NotesFlutterHomeScreen extends StatelessWidget {
         title: Text("Notes"),
         centerTitle: true,
         backgroundColor: Colors.amber,
-        actions: [
-          IconButton(
-            style: IconButton.styleFrom(backgroundColor: Colors.yellow),
-            onPressed: () async {
-              ConfirmDialog.showAlertDialogue(
-                context,
-                title: "Sign Out",
-                content: "Are you sure you want to log-out?",
-                confirmString: "Log-out",
-                onPressed: () {
-                  _signOutUser(context);
-                },
-              );
-            },
-            icon: Icon(Icons.logout),
-          ),
-        ],
+        actions: [_buildSignOutSection(context)],
       ),
+
+      body: ListView.separated(
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text("Note Title"),
+            subtitle: Text("Notes Description"),
+          );
+        },
+        separatorBuilder: (context, index) => const Divider(height: 5),
+        itemCount: 5,
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.push(AppRoutes.addnote);
+        },
+
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildSignOutSection(BuildContext context) {
+    return IconButton(
+      style: IconButton.styleFrom(backgroundColor: Colors.yellow),
+      onPressed: () async {
+        ConfirmDialog.showAlertDialogue(
+          context,
+          title: "Sign Out",
+          content: "Are you sure you want to log-out?",
+          confirmString: "Log-out",
+          onPressed: () {
+            _signOutUser(context);
+          },
+        );
+      },
+      icon: Icon(Icons.logout),
     );
   }
 }
