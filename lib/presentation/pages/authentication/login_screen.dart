@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/instance_manager.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:notes_flutter/controllers/obsecure_text_controller.dart';
+import 'package:notes_flutter/controllers/sign_in_controller.dart';
+import 'package:notes_flutter/models/auth_user.dart';
+import 'package:notes_flutter/routes/app_routes.dart';
 import 'package:notes_flutter/widgets/auth_bottom_section.dart';
 import 'package:notes_flutter/widgets/custom_auth_button.dart';
+import 'package:notes_flutter/widgets/snack_message.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,8 +23,31 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _passwordController = TextEditingController();
 
-  final ObsecureTextController obsecuredController =
+  final ObsecureTextController _obsecuredController =
       Get.find<ObsecureTextController>();
+
+  Future<void> _signInAccount(SignInController signInController) async {
+    final user = AuthUser(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+
+    final success = await signInController.signIn(user);
+    if (success) {
+      SnackMessage.shownackMessage(
+        message: "Login Sucessful",
+        type: SnackType.success,
+      );
+      if (mounted) {
+        context.go(AppRoutes.home);
+      }
+    } else {
+      SnackMessage.shownackMessage(
+        message: signInController.errorMessage,
+        type: SnackType.error,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +83,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 _buildPasswordTextField(),
                 const SizedBox(height: 20),
-                CustomAuthButton(
-                  buttonName: "Login",
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {}
+                GetBuilder<SignInController>(
+                  builder: (signInController) {
+                    return signInController.inProgress
+                        ? const Center(child: CircularProgressIndicator())
+                        : CustomAuthButton(
+                          buttonName: "Login",
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              _signInAccount(signInController);
+                            }
+                          },
+                        );
                   },
                 ),
 
@@ -69,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   labelText: "Don't have an account?",
                   authText: "Sign up",
                   onPressed: () {
-                    context.push("/signup");
+                    context.push(AppRoutes.signup);
                   },
                 ),
               ],
@@ -84,13 +118,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return Obx(
       () => TextFormField(
         controller: _passwordController,
-        obscureText: obsecuredController.isObsecured.value,
+        obscureText: _obsecuredController.isObsecured.value,
         decoration: InputDecoration(
           suffixIcon: IconButton(
             onPressed: () {
-              obsecuredController.toogleObsecure();
+              _obsecuredController.toogleObsecure();
             },
-            icon: obsecuredController.icon,
+            icon: _obsecuredController.icon,
           ),
           labelText: 'Password',
           hintText: "Enter your password",

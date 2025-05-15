@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:notes_flutter/controllers/obsecure_text_controller.dart';
+import 'package:notes_flutter/controllers/sign_up_controller.dart';
+import 'package:notes_flutter/models/auth_user.dart';
+import 'package:notes_flutter/routes/app_routes.dart';
 import 'package:notes_flutter/widgets/auth_bottom_section.dart';
 import 'package:notes_flutter/widgets/custom_auth_button.dart';
+import 'package:notes_flutter/widgets/snack_message.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -18,8 +22,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final ObsecureTextController obsecuredController =
+  final ObsecureTextController _obsecuredController =
       Get.find<ObsecureTextController>();
+
+  Future<void> _signUpAccount(SignUpController signUpController) async {
+    final user = AuthUser(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+
+    final success = await signUpController.singUp(user);
+    if (success) {
+      SnackMessage.shownackMessage(
+        message: "Account created! Please login",
+        type: SnackType.success,
+      );
+      _emailController.clear();
+      _nameController.clear();
+      _passwordController.clear();
+      if (mounted) {
+        context.push(AppRoutes.login);
+      }
+    } else {
+      SnackMessage.shownackMessage(
+        message: signUpController.errorMessage,
+        type: SnackType.error,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,10 +83,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 _buildPasswordTextField(),
                 const SizedBox(height: 30),
 
-                CustomAuthButton(
-                  buttonName: "SignUp",
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {}
+                GetBuilder<SignUpController>(
+                  builder: (signUpController) {
+                    return signUpController.inProgress
+                        ? const Center(child: CircularProgressIndicator())
+                        : CustomAuthButton(
+                          buttonName: "SignUp",
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              _signUpAccount(signUpController);
+                            }
+                          },
+                        );
                   },
                 ),
 
@@ -65,7 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   labelText: "Already have an account?",
                   authText: "Login",
                   onPressed: () {
-                    context.push("/login");
+                    context.push(AppRoutes.signup);
                   },
                 ),
               ],
@@ -80,14 +119,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Obx(
       () => TextFormField(
         controller: _passwordController,
-        obscureText: obsecuredController.isObsecured.value,
+        obscureText: _obsecuredController.isObsecured.value,
 
         decoration: InputDecoration(
           suffixIcon: IconButton(
             onPressed: () {
-              obsecuredController.toogleObsecure();
+              _obsecuredController.toogleObsecure();
             },
-            icon: obsecuredController.icon,
+            icon: _obsecuredController.icon,
           ),
           labelText: "Password",
           border: OutlineInputBorder(),
