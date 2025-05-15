@@ -6,7 +6,7 @@ import 'package:notes_flutter/controllers/sign_in_controller.dart';
 import 'package:notes_flutter/models/auth_user.dart';
 import 'package:notes_flutter/routes/app_routes.dart';
 import 'package:notes_flutter/widgets/auth_bottom_section.dart';
-import 'package:notes_flutter/widgets/custom_auth_button.dart';
+import 'package:notes_flutter/widgets/custom_elevated_button.dart';
 import 'package:notes_flutter/widgets/snack_message.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,6 +22,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
 
   final ObsecureTextController _obsecuredController =
       Get.find<ObsecureTextController>();
@@ -89,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   builder: (signInController) {
                     return signInController.inProgress
                         ? const Center(child: CircularProgressIndicator())
-                        : CustomAuthButton(
+                        : CustomElevatedButton(
                           buttonName: "Login",
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
@@ -121,11 +123,14 @@ class _LoginScreenState extends State<LoginScreen> {
       () => TextFormField(
         controller: _passwordController,
         obscureText: _obsecuredController.isObsecured.value,
+        focusNode: _emailFocusNode,
+        textInputAction: TextInputAction.next,
         decoration: InputDecoration(
           suffixIcon: IconButton(
             onPressed: () {
               _obsecuredController.toogleObsecure();
             },
+
             icon: _obsecuredController.icon,
           ),
           labelText: 'Password',
@@ -133,6 +138,9 @@ class _LoginScreenState extends State<LoginScreen> {
           hintStyle: TextStyle(color: Colors.grey),
           border: OutlineInputBorder(),
         ),
+        onFieldSubmitted: (value) {
+          FocusScope.of(context).requestFocus(_passwordFocusNode);
+        },
 
         validator: (String? value) {
           if (value == null || value.isEmpty) {
@@ -146,14 +154,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildEmailTextField() {
     return TextFormField(
+      focusNode: _passwordFocusNode,
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.done,
       decoration: InputDecoration(
         labelText: 'Email Address',
         hintText: "Enter your email",
         hintStyle: TextStyle(color: Colors.grey),
         border: OutlineInputBorder(),
       ),
+
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return "Please enter your email";

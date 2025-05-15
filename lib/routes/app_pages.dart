@@ -37,7 +37,7 @@ class AppPages {
         GoRoute(
           path: AppRoutes.addnote,
 
-          builder: (context, state) => const AddNotesScreen(),
+          builder: (context, state) => AddNotesScreen(),
         ),
       ],
     );
