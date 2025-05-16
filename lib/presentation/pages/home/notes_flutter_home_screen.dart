@@ -7,8 +7,21 @@ import 'package:notes_flutter/routes/app_routes.dart';
 import 'package:notes_flutter/widgets/confirm_dialog.dart';
 import 'package:notes_flutter/widgets/snack_message.dart';
 
-class NotesFlutterHomeScreen extends StatelessWidget {
+class NotesFlutterHomeScreen extends StatefulWidget {
   const NotesFlutterHomeScreen({super.key});
+
+  @override
+  State<NotesFlutterHomeScreen> createState() => _NotesFlutterHomeScreenState();
+}
+
+class _NotesFlutterHomeScreenState extends State<NotesFlutterHomeScreen> {
+  final NoteController _noteController = Get.find<NoteController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _noteController.loadNotes();
+  }
 
   Future<void> _signOutUser(BuildContext context) async {
     final SignOutController signOutController = Get.find<SignOutController>();
@@ -33,43 +46,40 @@ class NotesFlutterHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<NoteController>(
-      init: NoteController(),
-      builder: (noteController) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text("Notes"),
-            centerTitle: true,
-            backgroundColor: Colors.amber,
-            actions: [_buildSignOutSection(context)],
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Notes"),
 
-          body:
-              noteController.notes.isEmpty
-                  ? const Center(child: Text("No notes added yet."))
-                  : ListView.separated(
-                    itemBuilder: (context, index) {
-                      final note = noteController.notes[index];
-                      return ListTile(
-                        title: Text(note.title),
-                        subtitle: Text(note.description),
-                      );
-                    },
-                    separatorBuilder:
-                        (context, index) =>
-                            const Divider(height: 5, color: Colors.grey),
-                    itemCount: noteController.notes.length,
-                  ),
+        actions: [_buildSignOutSection(context)],
+      ),
 
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              context.push(AppRoutes.addnote);
-            },
+      body: GetBuilder<NoteController>(
+        builder: (noteController) {
+          return noteController.notes.isEmpty
+              ? const Center(child: Text("No notes added yet."))
+              : ListView.separated(
+                itemBuilder: (context, index) {
+                  final note = noteController.notes[index];
+                  return ListTile(
+                    title: Text(note.title),
+                    subtitle: Text(note.description),
+                  );
+                },
+                separatorBuilder:
+                    (context, index) =>
+                        const Divider(height: 5, color: Colors.grey),
+                itemCount: noteController.notes.length,
+              );
+        },
+      ),
 
-            child: const Icon(Icons.add),
-          ),
-        );
-      },
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.push(AppRoutes.addnote);
+        },
+
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
