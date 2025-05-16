@@ -62,35 +62,39 @@ class AddNotesScreen extends StatelessWidget {
                 onFieldSubmitted: (value) {},
               ),
               const SizedBox(height: 20),
-              GetBuilder<NoteController>(
-                builder: (noteController) {
-                  return noteController.inProgress
-                      ? const Center(child: CircularProgressIndicator())
-                      : CustomElevatedButton(
-                        buttonName: 'Add Note',
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            final note = NoteModel(
-                              title: _titleController.text.trim(),
-                              description: _descController.text.trim(),
-                            );
-
-                            await noteController.addNote(note);
-                            SnackMessage.shownackMessage(
-                              context: context,
-                              message: "Noted Added Successfully",
-                              type: SnackType.success,
-                            );
-                            context.pop();
-                          }
-                        },
-                      );
-                },
-              ),
+              _buildAddNote(context),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildAddNote(BuildContext context) {
+    return GetBuilder<NoteController>(
+      builder: (noteController) {
+        return noteController.inProgress
+            ? const Center(child: CircularProgressIndicator())
+            : CustomElevatedButton(
+              buttonName: 'Add Note',
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  final note = NoteModel(
+                    title: _titleController.text.trim(),
+                    description: _descController.text.trim(),
+                  );
+
+                  await noteController.addNote(note);
+                  SnackMessage.shownackMessage(
+                    context: context,
+                    message: "Noted Added Successfully",
+                    type: SnackType.success,
+                  );
+                  context.pop();
+                }
+              },
+            );
+      },
     );
   }
 }
