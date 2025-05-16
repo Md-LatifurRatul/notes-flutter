@@ -19,6 +19,25 @@ class NotesFlutterApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Notes App",
       routerConfig: AppPages.routes(initialRoute),
+
+      theme: ThemeData(
+        appBarTheme: _appBarTheme(),
+        elevatedButtonTheme: _elevatedButtonTheme(),
+      ),
     );
+  }
+
+  ElevatedButtonThemeData _elevatedButtonTheme() {
+    return ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        minimumSize: Size(double.infinity, 50),
+        backgroundColor: Colors.green,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  AppBarTheme _appBarTheme() {
+    return AppBarTheme(centerTitle: true, backgroundColor: Colors.amber);
   }
 }
