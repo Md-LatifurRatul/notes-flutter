@@ -11,13 +11,7 @@ class NoteController extends GetxController {
 
   bool get inProgress => _inProgress;
 
-  @override
-  void onInit() {
-    super.onInit();
-    _loadNotes();
-  }
-
-  void _loadNotes() {
+  void loadNotes() {
     _noteService.getUserNotes().listen((updatedNotes) {
       notes = updatedNotes;
       update();
