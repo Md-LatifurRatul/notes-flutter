@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+import 'package:notes_flutter/controllers/note_controller.dart';
+import 'package:notes_flutter/models/note_model.dart';
 import 'package:notes_flutter/widgets/custom_elevated_button.dart';
+import 'package:notes_flutter/widgets/snack_message.dart';
 
 class AddNotesScreen extends StatelessWidget {
   AddNotesScreen({super.key});
@@ -57,10 +62,29 @@ class AddNotesScreen extends StatelessWidget {
                 onFieldSubmitted: (value) {},
               ),
               const SizedBox(height: 20),
-              CustomElevatedButton(
-                buttonName: 'Add Note',
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {}
+              GetBuilder<NoteController>(
+                builder: (noteController) {
+                  return noteController.inProgress
+                      ? const Center(child: CircularProgressIndicator())
+                      : CustomElevatedButton(
+                        buttonName: 'Add Note',
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            final note = NoteModel(
+                              title: _titleController.text.trim(),
+                              description: _descController.text.trim(),
+                            );
+
+                            await noteController.addNote(note);
+                            SnackMessage.shownackMessage(
+                              context: context,
+                              message: "Noted Added Successfully",
+                              type: SnackType.success,
+                            );
+                            context.pop();
+                          }
+                        },
+                      );
                 },
               ),
             ],

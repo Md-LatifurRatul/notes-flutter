@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:notes_flutter/controllers/note_controller.dart';
 import 'package:notes_flutter/controllers/sign_out_controller.dart';
 import 'package:notes_flutter/routes/app_routes.dart';
 import 'package:notes_flutter/widgets/confirm_dialog.dart';
@@ -32,32 +33,43 @@ class NotesFlutterHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Notes"),
-        centerTitle: true,
-        backgroundColor: Colors.amber,
-        actions: [_buildSignOutSection(context)],
-      ),
+    return GetBuilder<NoteController>(
+      init: NoteController(),
+      builder: (noteController) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Notes"),
+            centerTitle: true,
+            backgroundColor: Colors.amber,
+            actions: [_buildSignOutSection(context)],
+          ),
 
-      body: ListView.separated(
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text("Note Title"),
-            subtitle: Text("Notes Description"),
-          );
-        },
-        separatorBuilder: (context, index) => const Divider(height: 5),
-        itemCount: 5,
-      ),
+          body:
+              noteController.notes.isEmpty
+                  ? const Center(child: Text("No notes added yet."))
+                  : ListView.separated(
+                    itemBuilder: (context, index) {
+                      final note = noteController.notes[index];
+                      return ListTile(
+                        title: Text(note.title),
+                        subtitle: Text(note.description),
+                      );
+                    },
+                    separatorBuilder:
+                        (context, index) =>
+                            const Divider(height: 5, color: Colors.grey),
+                    itemCount: noteController.notes.length,
+                  ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push(AppRoutes.addnote);
-        },
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              context.push(AppRoutes.addnote);
+            },
 
-        child: const Icon(Icons.add),
-      ),
+            child: const Icon(Icons.add),
+          ),
+        );
+      },
     );
   }
 
